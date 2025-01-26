@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from api.dependencies import get_db
+from api.auth import verify_admin
 from api.schemas import (
     UserCreate, UserResponse,
     RestaurantCreate, RestaurantResponse,
@@ -24,20 +25,20 @@ def add_user(user: UserCreate, db: Session = Depends(get_db)):
 def get_user(user_id: int, db: Session = Depends(get_db)):
     return get_user_by_id(user_id, db)
 
-@app.get("/users/", response_model=List[UserResponse])
+@app.get("/users/", response_model=List[UserResponse], dependencies=[Depends(verify_admin)])
 def get_users(db: Session = Depends(get_db)):
     return get_all_users(db)
 
-@app.put("/users/{user_id}", response_model=UserResponse)
+@app.put("/users/{user_id}", response_model=UserResponse, dependencies=[Depends(verify_admin)])
 def update_user_info(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
     return update_user(user_id, user, db)
 
-@app.delete("/users/{user_id}", status_code=204)
+@app.delete("/users/{user_id}", status_code=204, dependencies=[Depends(verify_admin)])
 def remove_user(user_id: int, db: Session = Depends(get_db)):
     return delete_user(user_id, db)
 
 # Restaurant Endpoints
-@app.post("/restaurants/", response_model=RestaurantResponse, status_code=201)
+@app.post("/restaurants/", response_model=RestaurantResponse, status_code=201, dependencies=[Depends(verify_admin)])
 def add_restaurant(restaurant: RestaurantCreate, db: Session = Depends(get_db)):
     return add_new_restaurant(restaurant, db)
 
@@ -49,11 +50,11 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_db)):
 def get_restaurants(db: Session = Depends(get_db)):
     return get_all_restaurants(db)
 
-@app.put("/restaurants/{restaurant_id}", response_model=RestaurantResponse)
+@app.put("/restaurants/{restaurant_id}", response_model=RestaurantResponse, dependencies=[Depends(verify_admin)])
 def update_restaurant_info(restaurant_id: int, restaurant: RestaurantCreate, db: Session = Depends(get_db)):
     return update_restaurant(restaurant_id, restaurant, db)
 
-@app.delete("/restaurants/{restaurant_id}", status_code=204)
+@app.delete("/restaurants/{restaurant_id}", status_code=204, dependencies=[Depends(verify_admin)])
 def remove_restaurant(restaurant_id: int, db: Session = Depends(get_db)):
     return delete_restaurant(restaurant_id, db)
 
@@ -70,10 +71,10 @@ def get_rating(rating_id: int, db: Session = Depends(get_db)):
 def get_ratings(db: Session = Depends(get_db)):
     return get_all_ratings(db)
 
-@app.put("/ratings/{rating_id}", response_model=RatingResponse)
+@app.put("/ratings/{rating_id}", response_model=RatingResponse, dependencies=[Depends(verify_admin)])
 def update_rating_info(rating_id: int, rating: RatingCreate, db: Session = Depends(get_db)):
     return update_rating(rating_id, rating, db)
 
-@app.delete("/ratings/{rating_id}", status_code=204)
+@app.delete("/ratings/{rating_id}", status_code=204, dependencies=[Depends(verify_admin)])
 def remove_rating(rating_id: int, db: Session = Depends(get_db)):
     return delete_rating(rating_id, db)

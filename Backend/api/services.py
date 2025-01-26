@@ -5,7 +5,7 @@ from datetime import datetime
 
 # User Services
 def add_new_user(user: UserCreate, db: Session):
-    new_user = User(username=user.username)
+    new_user = User(username=user.username, role=user.role)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -13,6 +13,9 @@ def add_new_user(user: UserCreate, db: Session):
 
 def get_user_by_id(user_id: int, db: Session):
     return db.query(User).filter(User.id == user_id).first()
+
+def get_admin_user(db: Session):
+    return db.query(User).filter(User.role == "admin").first()
 
 def get_all_users(db: Session):
     return db.query(User).all()

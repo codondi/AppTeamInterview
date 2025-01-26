@@ -9,6 +9,7 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
+    role = Column(String, default="user", nullable=False)
     ratings = relationship("RestaurantRating", back_populates="user")
 
 class Restaurant(Base):

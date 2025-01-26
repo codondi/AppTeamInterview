@@ -4,6 +4,7 @@ from datetime import datetime
 
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=1)
+    role: str = Field(default="user")
 
 class UserResponse(UserCreate):
     id: int
